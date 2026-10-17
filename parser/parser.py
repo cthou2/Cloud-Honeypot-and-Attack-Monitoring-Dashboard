@@ -1,3 +1,4 @@
+import re
 import csv
 import hashlib
 import json
@@ -12,11 +13,22 @@ from database.database import (
     insert_events,
 )
 
+
+LOGIN_PASSWORD = re.compile(r"\[([^/\]]*)/[^\]]*\]")
+
+
+def redact_password(event_type, message):
+    """Hide the password Cowrie repeats inside login messages."""
+    if isinstance(message, str) and str(event_type).startswith("cowrie.login."):
+        return LOGIN_PASSWORD.sub(r"[\1/<redacted>]", message)
+    return message
+
 # File locations
 
 LOG_FILE = Path(
     "/home/cowrie/my-honeypot/var/log/cowrie/cowrie.json"
 )
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -198,7 +210,7 @@ def normalize_event(event):
 
         "message":
             clean_value(
-                event.get("message")
+                redact_password(event.get("eventid"), event.get("message"))
             ),
     }
 
