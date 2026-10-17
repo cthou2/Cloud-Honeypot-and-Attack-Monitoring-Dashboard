@@ -5,4 +5,8 @@ __pycache__/
 
 data/*.csv
 data/*.json
+<<<<<<< Updated upstream
 *.log
+=======
+*.log
+>>>>>>> Stashed changes
