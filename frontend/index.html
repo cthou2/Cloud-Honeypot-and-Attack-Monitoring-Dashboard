@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Honeypot Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="vendor/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <header class="topbar">
+    <div>
+      <h1>Cloud Honeypot Monitor</h1>
+      <p class="subtitle">Live view of attacks caught by Cowrie</p>
+    </div>
+    <div class="controls">
+      <span id="status" class="status">Checking...</span>
+      <label class="toggle">
+        <input type="checkbox" id="autoRefresh" checked>
+        Auto-refresh (30s)
+      </label>
+      <button id="refreshBtn">Refresh now</button>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="cards">
+      <div class="card"><span class="label">Total events</span><span class="value" id="totalEvents">–</span></div>
+      <div class="card"><span class="label">Unique attacker IPs</span><span class="value" id="uniqueSources">–</span></div>
+      <div class="card"><span class="label">Failed logins</span><span class="value" id="failedLogins">–</span></div>
+      <div class="card"><span class="label">Successful logins</span><span class="value warn" id="successLogins">–</span></div>
+      <div class="card"><span class="label">Commands run</span><span class="value danger" id="commandCount">–</span></div>
+    </section>
+
+    <section class="panel">
+      <h2>Activity over time <small>(last 500 events, per hour)</small></h2>
+      <div class="chart-box tall"><canvas id="timelineChart"></canvas></div>
+    </section>
+
+    <section class="grid3">
+      <div class="panel">
+        <h2>Top attacker IPs</h2>
+        <p class="hint">Click a bar to filter the table</p>
+        <div class="chart-box"><canvas id="sourcesChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Top usernames tried</h2>
+        <p class="hint">Click a bar to filter the table</p>
+        <div class="chart-box"><canvas id="usernamesChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Top commands</h2>
+        <ul id="commandsList" class="cmd-list"></ul>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="table-header">
+        <h2>Events</h2>
+        <div class="filters">
+          <input type="text" id="searchBox" placeholder="Search IP, username, command...">
+          <select id="typeFilter">
+            <option value="">All event types</option>
+          </select>
+          <select id="riskFilter">
+            <option value="">All risk levels</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <button id="clearFilters" class="secondary">Clear</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Risk</th>
+              <th>Event type</th>
+              <th>Source IP</th>
+              <th>Username</th>
+              <th>Command</th>
+            </tr>
+          </thead>
+          <tbody id="eventsBody"></tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <button id="prevPage" class="secondary">← Newer</button>
+        <span id="pageInfo"></span>
+        <button id="nextPage" class="secondary">Older →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="detailOverlay" class="overlay hidden">
+    <div class="detail">
+      <button id="closeDetail" class="close">×</button>
+      <h2>Event details</h2>
+      <dl id="detailList"></dl>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
