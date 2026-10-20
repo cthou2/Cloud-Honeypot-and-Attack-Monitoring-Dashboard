@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 
 from database.database import get_connection
 from database.queries import (
@@ -20,6 +23,16 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# Dashboard (frontend/ folder) served at /dashboard
+
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+
+app.mount(
+    "/dashboard",
+    StaticFiles(directory=FRONTEND_DIR, html=True),
+    name="dashboard",
+)
+
 # Root endpoint
 
 @app.get("/")
@@ -32,6 +45,7 @@ def root():
         "project": "Cloud Honeypot Monitoring System - FastAPI Backend",
         "status": "running",
         "documentation": "/docs",
+        "dashboard": "/dashboard",
     }
 
 # Health check
